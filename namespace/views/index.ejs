@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect('/')
+        , room1 = io.connect('/room1')
+        , room2 = io.connect('/room2');
+  
+      room1.on('connect', function () {
+        room1.emit('room1 message receive', 'connected to room1');
+        room1.on('room1 message send', function(event){
+          $('#room1_area').prepend(event);
+        });
+      });
+  
+      room2.on('connect', function () {
+        room2.emit('room2 message receive', 'connected to room2');
+        room2.on('room2 message send', function(event){
+          $('#room2_area').prepend(event);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <div id='room1_area'></div>
+    <div id='room2_area'></div>
+  </body>
+</html>
