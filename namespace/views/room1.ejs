@@ -14,6 +14,7 @@
  $("#connectButton").click(function(event){
  socket = new io.connect("/");
  room1 = new io.connect("/room1");
+ $('#connectButton').attr('disabled', true);
 
  room1.on("connect", function(){
  $("#transportName").text("connect via " + room1.socket.transport.name);// 接続時に接続方式表示

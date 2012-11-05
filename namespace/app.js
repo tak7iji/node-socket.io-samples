@@ -53,10 +53,16 @@ var room1 = io.of('/room1').on('connection', function(socket) {
 });
 
 var room2 = io.of('/room2').on('connection', function(socket) {
+  var nickname;
   io.sockets.emit('server send', 'Room2: Connect from '+socket.handshake.address.address);
+  socket.on('send nickname', function(name) {
+    socket.set('nickname', name, function() {
+      nickname = name;
+    });
+  });
   socket.on('client send', function(event) {
     socket.emit('server send', event.message);
-    socket.broadcast.emit('server send', '>>> '+event.message);
+    socket.broadcast.emit('server send', nickname+'>>> '+event.message);
     console.log(event.message);
   });
 });

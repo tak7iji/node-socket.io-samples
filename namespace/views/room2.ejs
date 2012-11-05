@@ -14,6 +14,9 @@
  $("#connectButton").click(function(event){
  socket = new io.connect("/");
  room2 = new io.connect("/room2");
+ room2.emit('send nickname', $('#nickname').val());
+ $('#connectButton').attr('disabled', true);
+ $('#nickname').attr('disabled', true);
 
  room2.on("connect", function(){
  $("#transportName").text("connect via " + room2.socket.transport.name);// 接続時に接続方式表示
@@ -36,9 +39,10 @@
  </head>
  <body>
  <div id="transportName"></div>
- <input id="connectButton" type="button" value="connect"><p/>
+ <input id="nickname" value=''/>
+ <input id="connectButton" type="button" value="connect"/><p/>
  <input id="msg">
- <input id="submitButton" type="button" value="submit!">
+ <input id="submitButton" type="button" value="submit!"/>
  <div id="statusArea">
   <p></p>
  </div>
