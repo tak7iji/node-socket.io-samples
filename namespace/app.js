@@ -50,6 +50,9 @@ var room1 = io.of('/room1').on('connection', function(socket) {
     room1.emit('server send', '>>> '+event.message);
     console.log(event.message);
   });
+  socket.on('disconnect', function(event) {
+    console.log('disconnected.');
+  });
 });
 
 var room2 = io.of('/room2').on('connection', function(socket) {

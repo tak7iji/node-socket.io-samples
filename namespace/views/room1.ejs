@@ -8,36 +8,54 @@
  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
  <script>
  $(function(){
- var socket = null;
- var room1 = null;
+   var socket = null;
+   var room1 = null;
 
- $("#connectButton").click(function(event){
- socket = new io.connect("/");
- room1 = new io.connect("/room1");
- $('#connectButton').attr('disabled', true);
+   $("#connectButton").click(function(event){
+     socket = new io.connect("/");
+     room1 = new io.connect("/room1");
 
- room1.on("connect", function(){
- $("#transportName").text("connect via " + room1.socket.transport.name);// 接続時に接続方式表示
- });
+     console.log('connected!');
+     $('#connectButton').attr('disabled', true);
+     $('#disconnectButton').attr('disabled', false);
 
- socket.on("server send", function(message){
- $("<p>"+message+"</p>").replaceAll("#statusArea p");// 受信メッセージをレンダリング
- });
+     room1.on("connect", function(){
+       $("#transportName").text("connect via " + room1.socket.transport.name);// 接続時に接続方式表示
+     });
 
- room1.on("server send", function(message){
- $("<li>").text(message).prependTo($("#messageArea ul"));// 受信メッセージをレンダリング
- });
+     socket.on("server send", function(message){
+       $("<p>"+message+"</p>").replaceAll("#statusArea p");// 受信メッセージをレンダリング
+     });
 
- $("#submitButton").click(function(event){
- room1.emit("client send", {message: $("#msg").val()});// 入力メッセージをサーバへ
- });
- });
+     room1.on("server send", function(message){
+       $("<li>").text(message).prependTo($("#messageArea ul"));// 受信メッセージをレンダリング
+     });
+
+     room1.on("disconnect", function(){
+       console.log('connection closed');
+     });
+
+     $("#submitButton").click(function(event){
+       room1.emit("client send", {message: $("#msg").val()});// 入力メッセージをサーバへ
+     });
+   });
+
+   $("#disconnectButton").click(function(event){
+     socket.disconnect(); socket = null;
+     room1.disconnect(); room1 = null;
+     for(key in io.sockets)
+       delete io.sockets[key];
+     io.j = [];
+     $('#connectButton').attr('disabled', false);
+     $('#disconnectButton').attr('disabled', true);
+   });
  });
  </script>
  </head>
  <body>
  <div id="transportName"></div>
- <input id="connectButton" type="button" value="connect"><p/>
+ <input id="connectButton" type="button" value="connect">
+ <input id="disconnectButton" type="button" value="disconnect" disabled='true'><p/>
  <input id="msg">
  <input id="submitButton" type="button" value="submit!">
  <div id="statusArea">
