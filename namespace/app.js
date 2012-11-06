@@ -29,12 +29,12 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
-app.get('/users', user.list);
-app.get('/room1', function(req, res, next) {
-console.log('connect to room1');
-next();
-});
+//app.get('/', routes.index);
+//app.get('/users', user.list);
+//app.get('/room1', function(req, res, next) {
+//console.log('connect to room1');
+//next();
+//});
 app.get('/room1', routes.room1);
 app.get('/room2', routes.room2);
 
@@ -43,12 +43,21 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 });
 
 var io = require('socket.io').listen(server);
-io.settings.log = false;
+
+//io.settings.log = false;
 var room1 = io.of('/room1').on('connection', function(socket) {
   io.sockets.emit('server send', 'Room1: Connect from '+socket.handshake.address.address);
-  socket.on('client send', function(event) {
+
+  var broadcaster = function(event) {
     room1.emit('server send', '>>> '+event.message);
     console.log(event.message);
+  };
+
+  socket.on('client send', broadcaster);
+
+  socket.on('disconnect', function(event) {
+    console.log('disconnected.');
+//    console.log(io.sockets);
   });
 });
 

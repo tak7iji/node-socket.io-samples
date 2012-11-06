@@ -8,12 +8,10 @@
  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
  <script>
  $(function(){
-   var socket = null;
    var room1 = null;
 
    $("#connectButton").click(function(event){
-     socket = io.connect("/");
-     room1 = io.connect("/room1");
+     room1 = io.connect("/");
 
      console.log('connected!');
      $('#connectButton').attr('disabled', true);
@@ -21,10 +19,6 @@
 
      room1.on("connect", function(){
        $("#transportName").text("connect via " + room1.socket.transport.name);// 接続時に接続方式表示
-     });
-
-     socket.on("server send", function(message){
-       $("<p>"+message+"</p>").replaceAll("#statusArea p");// 受信メッセージをレンダリング
      });
 
      room1.on("server send", function(message){
@@ -35,14 +29,14 @@
        console.log('connection closed');
      });
 
-   });
-
-   $("#submitButton").click(function(event){
-     room1.emit("client send", {message: $("#msg").val()});// 入力メッセージをサーバへ
+     // この位置にあると、再接続のたびに送られてくるメッセージが増えていく。
+     // $("#connectButton").click(function(event){...});の外にあると大丈夫
+     $("#submitButton").click(function(event){
+       room1.emit("client send", {message: $("#msg").val()});// 入力メッセージをサーバへ
+     });
    });
 
    $("#disconnectButton").click(function(event){
-     socket.disconnect();
      room1.disconnect();
      for(key in io.sockets)
        delete io.sockets[key];

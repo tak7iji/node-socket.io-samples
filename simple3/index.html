@@ -1,0 +1,46 @@
+<html>
+<head>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript"
+src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>
+
+$(function() {
+  var socket = null;
+
+  $('#connect').click(function(event) {
+    socket = new io.connect('/');
+    $('#connect').attr('disabled', true);
+    $('#disconnect').attr('disabled', false);
+
+    socket.on('server send', function(msg) {
+      console.log(msg);
+      $('#message').prepend('<br>'+msg+'</br>');
+    });
+  });
+
+  $('#submit').click(function(event) {
+    socket.emit('client send', $('#msg').val());
+  });
+
+  $('#disconnect').click(function(event) {
+    socket.disconnect(); socket = null;
+    for(key in io.sockets)
+      delete io.sockets[key];
+
+    $('#connect').attr('disabled', false);
+    $('#disconnect').attr('disabled', true);
+  });
+
+});
+
+</script>
+</head>
+<body>
+<input id='connect' type='button' value='connect'/>
+<input id='disconnect' type='button' value='disconnect' disabled='true'/><p/>
+<input id='msg'/>
+<input id='submit' type='button' value='submit'/>
+<div id='message'></div>
+</body>
+</html>
