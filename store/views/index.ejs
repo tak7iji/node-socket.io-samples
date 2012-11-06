@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+    $(function(){
+      var socket;
+      $('#send').click(function(event) {
+        socket = io.connect('/');
+        socket.emit('set data', $('#data').val());
+        socket.on('server send', function(msg) {
+          $('<p>'+msg+'</p>').replaceAll($('#msg p'));
+        });
+      });
+      $('#get').click(function(event) {
+        socket.emit('client send', 'Hello World');
+      });
+    });
+    </script>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <input id='data'/>
+    <input id='send' type='button' value='send data'/>
+    <input id='get' type='button' value='get data'/>
+    <div id='msg'><p/></div>
+  </body>
+</html>
