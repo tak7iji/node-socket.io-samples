@@ -12,8 +12,8 @@
    var room1 = null;
 
    $("#connectButton").click(function(event){
-     socket = new io.connect("/");
-     room1 = new io.connect("/room1");
+     socket = io.connect("/");
+     room1 = io.connect("/room1");
 
      console.log('connected!');
      $('#connectButton').attr('disabled', true);
@@ -35,14 +35,15 @@
        console.log('connection closed');
      });
 
-     $("#submitButton").click(function(event){
-       room1.emit("client send", {message: $("#msg").val()});// 入力メッセージをサーバへ
-     });
+   });
+
+   $("#submitButton").click(function(event){
+     room1.emit("client send", {message: $("#msg").val()});// 入力メッセージをサーバへ
    });
 
    $("#disconnectButton").click(function(event){
-     socket.disconnect(); socket = null;
-     room1.disconnect(); room1 = null;
+     socket.disconnect();
+     room1.disconnect();
      for(key in io.sockets)
        delete io.sockets[key];
      io.j = [];
