@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><%= title %></title>
+ <link rel='stylesheet' href='/stylesheets/style.css' />
+
+ <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+ <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+ <script>
+ $(function(){
+   var room1 = io.connect("/");
+
+   $('#join').click(function() {
+     room1.emit('join', $('#room').val());
+     $('#join').attr('disabled', true);
+     $('#leave').attr('disabled', false);
+   });
+
+   $('#leave').click(function() {
+     room1.emit('leave');
+     $('#join').attr('disabled', false);
+     $('#leave').attr('disabled', true);
+   });
+
+   room1.on("server send", function(message){
+     $("<li>").text(message).prependTo($("#messageArea ul"));// 受信メッセージをレンダリング
+   });
+
+   $("#submitButton").click(function(event){
+     room1.emit("client send", $("#msg").val());
+   });
+ });
+ </script>
+ </head>
+ <body>
+ <div id="transportName"></div>
+ <input id="room">
+ <input id="join" type="button" value="join">
+ <input id="leave" type="button" value="leave" disabled='true'><p/>
+ <input id="msg">
+ <input id="submitButton" type="button" value="submit!">
+ <div id="messageArea">
+ <ul></ul>
+ </div>
+ </body>
+</html>
